@@ -94,22 +94,20 @@ public class ServerTest {
     }
 
     private boolean isPortUsed(int port) {
-        Boolean isUsed = null;
         ServerSocket socket = null;
 
         try {
             socket = new ServerSocket(port);
-            isUsed = false;
         } catch (IOException e) {
-            isUsed = true;
+            return true;
         }
 
-        if (socket != null) {
-            try {
-                socket.close();
-            } catch (IOException ignored) {}
+        try {
+            socket.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
 
-        return isUsed;
+        return false;
     }
 }
