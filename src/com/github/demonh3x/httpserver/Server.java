@@ -5,20 +5,17 @@ import java.net.ServerSocket;
 
 public class Server {
     private final int port;
-    private ServerSocket socket;
-    private boolean running;
+    private ServerSocket socket = null;
 
     public Server(int port) {
         this.port = port;
-        this.running = false;
     }
 
     public synchronized void start() {
-        if (running) return;
+        if (socket != null) return;
 
         try {
             socket = new ServerSocket(port);
-            running = true;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -26,7 +23,7 @@ public class Server {
 
     public void stop() {
         try {
-            socket.close();
+            if (socket != null) socket.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

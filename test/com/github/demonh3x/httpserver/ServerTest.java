@@ -29,6 +29,12 @@ public class ServerTest {
     }
 
     @Test
+    public void doesNotBreakIfStoppedWithoutStarting() {
+        Server server = new Server(9999);
+        server.stop();
+    }
+
+    @Test
     public void doesNotBreakIfStartedTwice() {
         Server server = new Server(9999);
         server.start();
