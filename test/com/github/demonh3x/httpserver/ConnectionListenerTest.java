@@ -60,7 +60,17 @@ public class ConnectionListenerTest {
     }
 
     @Test
-    public void unblocksAndClosesTheServerWhenAnotherThreadTellsToFinish() throws IOException, InterruptedException {
+    public void closesTheServerWhenFinishing() throws IOException {
+        server = new ServerSocket(9999);
+        final ConnectionListener listener = new ConnectionListener(server, NULL_CONNECTION_HANDLER);
+
+        assertThat(server.isClosed(), is(false));
+        listener.finish();
+        assertThat(server.isClosed(), is(true));
+    }
+
+    @Test
+    public void stopsWaitingForConnectionWhenAnotherThreadTellsToFinish() throws IOException, InterruptedException {
         server = new ServerSocket(9999);
         final ConnectionListener listener = new ConnectionListener(server, NULL_CONNECTION_HANDLER);
 
@@ -72,8 +82,6 @@ public class ConnectionListenerTest {
         });
 
         listener.waitForConnection();
-
-        assertThat(server.isClosed(), is(true));
     }
 
     @Test
