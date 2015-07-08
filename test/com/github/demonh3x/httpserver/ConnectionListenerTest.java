@@ -97,6 +97,24 @@ public class ConnectionListenerTest {
     }
 
     @Test
+    public void isNotFinishedAfterHandlingAConnection() throws IOException {
+        server = new ServerSocket(9999);
+        final ConnectionListener listener = new ConnectionListener(server, NULL_CONNECTION_HANDLER);
+
+        doAfterWaiting(50, new Action() {
+            @Override
+            public void run() throws IOException {
+                newSocket("localhost", 9999);
+            }
+        });
+
+        listener.waitForConnection();
+
+        assertThat(listener.isFinished(), is(false));
+        assertThat(server.isClosed(), is(false));
+    }
+
+    @Test
     public void theServerCanReceiveDataFromTheClient() throws IOException {
         server = new ServerSocket(9999);
 
@@ -152,23 +170,6 @@ public class ConnectionListenerTest {
         waitForClientToFinishReading.acquire();
 
         assertThat(messageForClient.get(), is("Hello client! I'm the server!"));
-    }
-
-    @Test
-    public void isNotFinishedAfterHandlingAConnection() throws IOException {
-        server = new ServerSocket(9999);
-        final ConnectionListener listener = new ConnectionListener(server, NULL_CONNECTION_HANDLER);
-
-        doAfterWaiting(50, new Action() {
-            @Override
-            public void run() throws IOException {
-                newSocket("localhost", 9999);
-            }
-        });
-
-        listener.waitForConnection();
-
-        assertThat(listener.isFinished(), is(false));
     }
 
     abstract class ConnectionHandlerIgnoringExceptions implements ConnectionHandler {
