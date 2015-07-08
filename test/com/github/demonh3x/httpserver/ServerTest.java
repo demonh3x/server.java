@@ -21,13 +21,13 @@ public class ServerTest {
 
     @Test
     public void thePortIsNotUsedBeforeStarting() {
-        new Server(9999);
+        createServer(9999);
         assertThat(isPortUsed(9999), is(false));
     }
 
     @Test
     public void thePortIsUsedAfterStartingAndIsReleasedAfterStopping() {
-        Server server = new Server(9999);
+        Server server = createServer(9999);
         server.start();
         assertThat(isPortUsed(9999), is(true));
         server.stop();
@@ -36,13 +36,13 @@ public class ServerTest {
 
     @Test
     public void doesNotBreakIfStoppedWithoutStarting() {
-        Server server = new Server(9999);
+        Server server = createServer(9999);
         server.stop();
     }
 
     @Test
     public void doesNotBreakIfStartedTwice() {
-        Server server = new Server(9999);
+        Server server = createServer(9999);
         server.start();
         server.start();
         server.stop();
@@ -54,7 +54,7 @@ public class ServerTest {
             @Override
             public void run() {
                 for (int i = 0; i < 20; i ++) {
-                    final Server server = new Server(9999);
+                    final Server server = createServer(9999);
                     runNTimesInParallel(10, new Runnable() {
                         @Override
                         public void run() {
@@ -67,6 +67,10 @@ public class ServerTest {
         });
 
         assertThat(errors, is(""));
+    }
+
+    private Server createServer(int port) {
+        return new Server(port);
     }
 
     private void runNTimesInParallel(int times, Runnable action) {
