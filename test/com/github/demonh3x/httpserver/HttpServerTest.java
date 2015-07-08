@@ -10,15 +10,18 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 public class HttpServerTest {
     @Test
-    public void beforeStartingThePortShouldNotBeUsed() {
+    public void thePortIsNotUsedBeforeStarting() {
         new Server(9999);
         assertThat(isPortUsed(9999), is(false));
     }
 
     @Test
-    public void afterStartingThePortShouldBeUsed() {
-        new Server(9999).start();
+    public void thePortIsUsedAfterStartingAndIsReleasedAfterStopping() {
+        Server server = new Server(9999);
+        server.start();
         assertThat(isPortUsed(9999), is(true));
+        server.stop();
+        assertThat(isPortUsed(9999), is(false));
     }
 
     private boolean isPortUsed(int port) {

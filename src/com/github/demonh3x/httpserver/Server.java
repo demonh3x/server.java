@@ -5,6 +5,7 @@ import java.net.ServerSocket;
 
 public class Server {
     private final int port;
+    private ServerSocket socket;
 
     public Server(int port) {
         this.port = port;
@@ -12,7 +13,15 @@ public class Server {
 
     public void start() {
         try {
-            new ServerSocket(port);
+            socket = new ServerSocket(port);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void stop() {
+        try {
+            socket.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
