@@ -3,6 +3,7 @@ package com.github.demonh3x.httpserver;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 
 public class ConnectionListener {
     private final ServerSocket server;
@@ -18,11 +19,24 @@ public class ConnectionListener {
     public void waitForConnection() {
         if (finished) return;
 
+        Socket connection;
         try {
-            Socket connection = server.accept();
-            handler.handle(connection);
+            connection = server.accept();
         } catch (IOException e) {
-            if (!finished) throw new RuntimeException(e);
+            if (e instanceof SocketException &&
+                    "Socket closed".equals(e.getMessage())) {
+                finished = true;
+                return;
+            } else {
+                throw new RuntimeException(e);
+            }
+        }
+
+        try {
+            handler.handle(connection);
+        } catch (RuntimeException e) {
+            finish();
+            throw e;
         }
     }
 
@@ -31,9 +45,7 @@ public class ConnectionListener {
 
         try {
             server.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        } catch (IOException ignored) {}
     }
 
     public boolean isFinished() {
