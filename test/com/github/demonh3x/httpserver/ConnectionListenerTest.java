@@ -79,23 +79,6 @@ public class ConnectionListenerTest {
     }
 
     @Test
-    public void isFinishedWhenAnotherThreadTellToFinish() throws IOException {
-        server = new ServerSocket(9999);
-        final ConnectionListener listener = new ConnectionListener(server, NULL_CONNECTION_HANDLER);
-
-        doAfterWaiting(50, new Action() {
-            @Override
-            public void run() {
-                listener.finish();
-            }
-        });
-
-        listener.waitForConnection();
-
-        assertThat(listener.isFinished(), is(true));
-    }
-
-    @Test
     public void doesNotWaitWhenIsFinished() throws IOException {
         server = new NotAcceptingServerSocketMock(9999);
         final ConnectionListener listener = new ConnectionListener(server, NULL_CONNECTION_HANDLER);
