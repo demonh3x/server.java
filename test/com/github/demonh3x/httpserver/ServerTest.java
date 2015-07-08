@@ -65,7 +65,7 @@ public class ServerTest {
     }
 
     @Test
-    public void canReceiveConnectionsSequentially() throws IOException {
+    public void canReceiveConnectionsSequentially() {
         Server server = createServer(9999, new ServesNumberOfConnectionsMade());
         server.start();
 
@@ -78,6 +78,32 @@ public class ServerTest {
         assertThat(first, is(1));
         assertThat(second, is(2));
         assertThat(third, is(3));
+    }
+
+    @Test
+    public void canReceiveConnectionsConcurrently() {
+        ServesNumberOfConnectionsMade handler = new ServesNumberOfConnectionsMade();
+        final Server server = createServer(9999, handler);
+        server.start();
+
+        String errors = getStderrDuring(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i < 20; i ++) {
+                    runNTimesInParallel(50, new Runnable() {
+                        @Override
+                        public void run() {
+                            getNumberFromServerAt(9999);
+                        }
+                    });
+                }
+            }
+        });
+
+        server.stop();
+
+        assertThat(errors, is(""));
+        assertThat(handler.connectionsMade.get(), is(1000));
     }
 
     private class ServesNumberOfConnectionsMade implements ConnectionHandler {
@@ -93,9 +119,13 @@ public class ServerTest {
         }
     }
 
-    private int getNumberFromServerAt(int port) throws IOException {
-        Socket client = new Socket("localhost", port);
-        return client.getInputStream().read();
+    private int getNumberFromServerAt(int port) {
+        try {
+            Socket client = new Socket("localhost", port);
+            return client.getInputStream().read();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private Server createServer(int port) {
