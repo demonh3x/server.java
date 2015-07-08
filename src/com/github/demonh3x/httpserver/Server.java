@@ -6,14 +6,19 @@ import java.net.ServerSocket;
 public class Server {
     private final int port;
     private ServerSocket socket;
+    private boolean running;
 
     public Server(int port) {
         this.port = port;
+        this.running = false;
     }
 
-    public void start() {
+    public synchronized void start() {
+        if (running) return;
+
         try {
             socket = new ServerSocket(port);
+            running = true;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
