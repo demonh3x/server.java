@@ -64,6 +64,16 @@ public class ConnectionListenerTest {
     }
 
     @Test
+    public void finishCanBeCalledSeveralTimesWithoutProblems() throws IOException {
+        server = new ServerSocket(9999);
+        final ConnectionListener listener = new ConnectionListener(server, NULL_CONNECTION_HANDLER);
+        listener.finish();
+        listener.finish();
+        listener.finish();
+        listener.finish();
+    }
+
+    @Test
     public void stopsWaitingForConnectionWhenAnotherThreadTellsToFinish() throws IOException, InterruptedException {
         server = new ServerSocket(9999);
         final ConnectionListener listener = new ConnectionListener(server, NULL_CONNECTION_HANDLER);
