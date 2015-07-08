@@ -1,6 +1,9 @@
 package com.github.demonh3x.httpserver;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestRule;
+import org.junit.rules.Timeout;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -13,6 +16,9 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class ServerTest {
+    @Rule
+    public TestRule timeout = new Timeout(1000);
+
     @Test
     public void thePortIsNotUsedBeforeStarting() {
         new Server(9999);
@@ -94,7 +100,7 @@ public class ServerTest {
     }
 
     private boolean isPortUsed(int port) {
-        ServerSocket socket = null;
+        ServerSocket socket;
 
         try {
             socket = new ServerSocket(port);
