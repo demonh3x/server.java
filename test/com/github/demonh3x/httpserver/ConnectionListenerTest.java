@@ -53,7 +53,7 @@ public class ConnectionListenerTest {
 
     @Test
     public void isFinishedAfterCallingFinish() throws IOException {
-        server = new NotAcceptingServerSocketMock(9999);
+        server = new ServerSocket(9999);
         final ConnectionListener listener = new ConnectionListener(server, NULL_CONNECTION_HANDLER);
         listener.finish();
         assertThat(listener.isFinished(), is(true));
