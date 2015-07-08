@@ -44,7 +44,23 @@ public class ConnectionListenerTest {
     }
 
     @Test
-    public void unblocksAndClosesTheSocketWhenAnotherThreadTellsToFinish() throws IOException, InterruptedException {
+    public void isNotFinishedAfterBeingCreated() throws IOException {
+        server = new ServerSocket(9999);
+        final ConnectionListener listener = new ConnectionListener(server, NULL_CONNECTION_HANDLER);
+
+        assertThat(listener.isFinished(), is(false));
+    }
+
+    @Test
+    public void isFinishedAfterCallingFinish() throws IOException {
+        server = new NotAcceptingServerSocketMock(9999);
+        final ConnectionListener listener = new ConnectionListener(server, NULL_CONNECTION_HANDLER);
+        listener.finish();
+        assertThat(listener.isFinished(), is(true));
+    }
+
+    @Test
+    public void unblocksAndClosesTheServerWhenAnotherThreadTellsToFinish() throws IOException, InterruptedException {
         server = new ServerSocket(9999);
         final ConnectionListener listener = new ConnectionListener(server, NULL_CONNECTION_HANDLER);
 
@@ -61,7 +77,24 @@ public class ConnectionListenerTest {
     }
 
     @Test
-    public void doesNotWaitIfToldToFinishBefore() throws IOException {
+    public void isFinishedWhenAnotherThreadTellToFinish() throws IOException {
+        server = new ServerSocket(9999);
+        final ConnectionListener listener = new ConnectionListener(server, NULL_CONNECTION_HANDLER);
+
+        doAfterWaiting(50, new Action() {
+            @Override
+            public void run() {
+                listener.finish();
+            }
+        });
+
+        listener.waitForConnection();
+
+        assertThat(listener.isFinished(), is(true));
+    }
+
+    @Test
+    public void doesNotWaitWhenIsFinished() throws IOException {
         server = new NotAcceptingServerSocketMock(9999);
         final ConnectionListener listener = new ConnectionListener(server, NULL_CONNECTION_HANDLER);
         listener.finish();
@@ -73,9 +106,9 @@ public class ConnectionListenerTest {
         server = new ServerSocket(9999);
 
         final AtomicReference<String> messageForTheServer = new AtomicReference<>(null);
-        final ConnectionListener listener = new ConnectionListener(server, new ConnectionHandler() {
+        final ConnectionListener listener = new ConnectionListener(server, new ConnectionHandlerIgnoringExceptions() {
             @Override
-            public void handle(Socket clientConnection) throws IOException {
+            public void _handle(Socket clientConnection) throws IOException {
                 String message = readFrom(clientConnection);
                 messageForTheServer.set(message);
             }
@@ -99,9 +132,9 @@ public class ConnectionListenerTest {
     public void theClientCanReceiveDataFromTheServer() throws IOException, InterruptedException {
         server = new ServerSocket(9999);
 
-        final ConnectionListener listener = new ConnectionListener(server, new ConnectionHandler() {
+        final ConnectionListener listener = new ConnectionListener(server, new ConnectionHandlerIgnoringExceptions() {
             @Override
-            public void handle(Socket clientConnection) throws IOException {
+            public void _handle(Socket clientConnection) throws IOException {
                 writeTo(clientConnection, "Hello client! I'm the server!");
                 clientConnection.close();
             }
@@ -126,7 +159,37 @@ public class ConnectionListenerTest {
         assertThat(messageForClient.get(), is("Hello client! I'm the server!"));
     }
 
-    private interface Action {
+    @Test
+    public void isNotFinishedAfterHandlingAConnection() throws IOException {
+        server = new ServerSocket(9999);
+        final ConnectionListener listener = new ConnectionListener(server, NULL_CONNECTION_HANDLER);
+
+        doAfterWaiting(50, new Action() {
+            @Override
+            public void run() throws IOException {
+                newSocket("localhost", 9999);
+            }
+        });
+
+        listener.waitForConnection();
+
+        assertThat(listener.isFinished(), is(false));
+    }
+
+    abstract class ConnectionHandlerIgnoringExceptions implements ConnectionHandler {
+        public abstract void _handle(Socket clientConnection) throws IOException;
+
+        @Override
+        public void handle(Socket clientConnection) {
+            try {
+                _handle(clientConnection);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    interface Action {
         void run() throws Exception;
     }
 

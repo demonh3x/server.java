@@ -35,4 +35,8 @@ public class ConnectionListener {
             throw new RuntimeException(e);
         }
     }
+
+    public boolean isFinished() {
+        return finished;
+    }
 }
