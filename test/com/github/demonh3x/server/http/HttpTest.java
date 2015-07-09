@@ -1,6 +1,7 @@
 package com.github.demonh3x.server.http;
 
 import com.github.demonh3x.server.ConnectionDouble;
+import com.github.demonh3x.server.ConnectionFailingToClose;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -70,5 +71,59 @@ public class HttpTest {
         new Http(requestHandler).handle(connection);
 
         assertThat(connection.isClosed(), is(true));
+    }
+
+    @Test
+    public void doesNotCallTheRequestHandlerAndClosesTheConnectionWhenReceivesAnIncompleteRequest() {
+        RequestHandlerSpy requestHandler = new RequestHandlerSpy();
+        ConnectionDouble connection = new ConnectionDouble("GET");
+        new Http(requestHandler).handle(connection);
+
+        assertThat(requestHandler.hasBeenCalled(), is(false));
+        assertThat(connection.isClosed(), is(true));
+    }
+
+    @Test
+    public void doesNotCallTheRequestHandlerAndClosesTheConnectionWhenThereIsAnExceptionGettingTheInput() {
+        RequestHandlerSpy requestHandler = new RequestHandlerSpy();
+        ConnectionFailingToGetTheInput connection = new ConnectionFailingToGetTheInput();
+        new Http(requestHandler).handle(connection);
+
+        assertThat(requestHandler.hasBeenCalled(), is(false));
+        assertThat(connection.isClosed(), is(true));
+    }
+
+    @Test
+    public void doesNotCallTheRequestHandlerAndClosesTheConnectionWhenThereIsAnExceptionReadingTheInput() {
+        RequestHandlerSpy requestHandler = new RequestHandlerSpy();
+        ConnectionFailingToReadInput connection = new ConnectionFailingToReadInput();
+        new Http(requestHandler).handle(connection);
+
+        assertThat(requestHandler.hasBeenCalled(), is(false));
+        assertThat(connection.isClosed(), is(true));
+    }
+
+    @Test
+    public void triesToCloseTheConnectionWhenThereIsAnExceptionGettingTheOutput() {
+        RequestHandlerDouble requestHandler = new RequestHandlerDouble(NULL_RESPONSE);
+        ConnectionFailingToWriteOutput connection = new ConnectionFailingToGetTheOutput("GET / HTTP/1.1\n");
+        new Http(requestHandler).handle(connection);
+
+        assertThat(connection.isClosed(), is(true));
+    }
+
+    @Test
+    public void triesToCloseTheConnectionWhenThereIsAnExceptionWritingTheOutput() {
+        RequestHandlerDouble requestHandler = new RequestHandlerDouble(NULL_RESPONSE);
+        ConnectionFailingToWriteOutput connection = new ConnectionFailingToWriteOutput("GET / HTTP/1.1\n");
+        new Http(requestHandler).handle(connection);
+
+        assertThat(connection.isClosed(), is(true));
+    }
+
+    @Test
+    public void shouldNotBreakWhenThereIsAnExceptionClosingTheConnection() {
+        RequestHandlerDouble requestHandler = new RequestHandlerDouble(NULL_RESPONSE);
+        new Http(requestHandler).handle(new ConnectionFailingToClose("GET / HTTP/1.1\n"));
     }
 }

@@ -21,9 +21,11 @@ public class Http implements ConnectionHandler {
             Request request = parseRequest(client.getInputStream());
             Response response = requestHandler.handle(request);
             write(client.getOutputStream(), response);
-            client.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (Exception ignored) {
+        } finally {
+            try {
+                client.close();
+            } catch (IOException ignore) {}
         }
     }
 
