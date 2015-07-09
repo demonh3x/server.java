@@ -1,4 +1,4 @@
-package com.github.demonh3x.httpserver;
+package com.github.demonh3x.server;
 
 import org.junit.Rule;
 import org.junit.Test;

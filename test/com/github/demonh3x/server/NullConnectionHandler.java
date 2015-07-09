@@ -1,4 +1,4 @@
-package com.github.demonh3x.httpserver;
+package com.github.demonh3x.server;
 
 public class NullConnectionHandler implements ConnectionHandler {
     @Override
