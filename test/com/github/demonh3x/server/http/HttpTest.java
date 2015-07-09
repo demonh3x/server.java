@@ -5,6 +5,7 @@ import com.github.demonh3x.server.ConnectionFailingToClose;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class HttpTest {
@@ -125,5 +126,26 @@ public class HttpTest {
     public void shouldNotBreakWhenThereIsAnExceptionClosingTheConnection() {
         RequestHandlerDouble requestHandler = new RequestHandlerDouble(NULL_RESPONSE);
         new Http(requestHandler).handle(new ConnectionFailingToClose("GET / HTTP/1.1\n"));
+    }
+
+    @Test
+    public void theExceptionsOccurringInTheRequestHandlerShouldBubbleUp() {
+        final RuntimeException handlerException = new RuntimeException();
+        RequestHandler requestHandler = new RequestHandler() {
+            @Override
+            public Response handle(Request request) {
+                throw handlerException;
+            }
+        };
+        ConnectionDouble connection = new ConnectionDouble("GET / HTTP/1.1\n");
+
+        RuntimeException thrownException = null;
+        try {
+            new Http(requestHandler).handle(connection);
+        } catch (RuntimeException e) {
+            thrownException = e;
+        }
+
+        assertThat(thrownException, sameInstance(handlerException));
     }
 }

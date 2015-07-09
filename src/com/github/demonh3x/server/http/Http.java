@@ -17,16 +17,28 @@ public class Http implements ConnectionHandler {
 
     @Override
     public void handle(Connection client) {
+        Request request;
         try {
-            Request request = parseRequest(client.getInputStream());
-            Response response = requestHandler.handle(request);
+            request = parseRequest(client.getInputStream());
+        } catch (Exception ignored) {
+            close(client);
+            return;
+        }
+
+        Response response = requestHandler.handle(request);
+
+        try {
             write(client.getOutputStream(), response);
         } catch (Exception ignored) {
         } finally {
-            try {
-                client.close();
-            } catch (IOException ignore) {}
+            close(client);
         }
+    }
+
+    private void close(Connection client) {
+        try {
+            client.close();
+        } catch (IOException ignore) {}
     }
 
     private void write(OutputStream outputStream, Response response) throws IOException {
