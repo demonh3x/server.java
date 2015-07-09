@@ -33,7 +33,7 @@ public class ConnectionListener {
         }
 
         try {
-            handler.handle(connection);
+            handler.handle(new SocketConnection(connection));
         } catch (RuntimeException e) {
             finish();
             throw e;

@@ -102,7 +102,7 @@ public class ConnectionListenerTest {
         doAfterWaiting(50, new Action() {
             @Override
             public void run() throws IOException {
-                newSocket("localhost", 9999);
+                newConnection("localhost", 9999);
             }
         });
 
@@ -119,8 +119,8 @@ public class ConnectionListenerTest {
         final AtomicReference<String> messageForTheServer = new AtomicReference<>(null);
         final ConnectionListener listener = new ConnectionListener(server, new ConnectionHandlerIgnoringExceptions() {
             @Override
-            public void _handle(Socket clientConnection) throws IOException {
-                String message = readFrom(clientConnection);
+            public void _handle(Connection client) throws IOException {
+                String message = readFrom(client);
                 messageForTheServer.set(message);
             }
         });
@@ -128,9 +128,9 @@ public class ConnectionListenerTest {
         doAfterWaiting(50, new Action() {
             @Override
             public void run() throws IOException {
-                Socket serverConnection = newSocket("localhost", 9999);
-                writeTo(serverConnection, "Hello server! I'm the client!");
-                serverConnection.close();
+                Connection server = newConnection("localhost", 9999);
+                writeTo(server, "Hello server! I'm the client!");
+                server.close();
             }
         });
 
@@ -145,7 +145,7 @@ public class ConnectionListenerTest {
 
         final ConnectionListener listener = new ConnectionListener(server, new ConnectionHandlerIgnoringExceptions() {
             @Override
-            public void _handle(Socket clientConnection) throws IOException {
+            public void _handle(Connection clientConnection) throws IOException {
                 writeTo(clientConnection, "Hello client! I'm the server!");
                 clientConnection.close();
             }
@@ -156,8 +156,8 @@ public class ConnectionListenerTest {
         doAfterWaiting(50, new Action() {
             @Override
             public void run() throws IOException {
-                Socket serverConnection = newSocket("localhost", 9999);
-                String message = readFrom(serverConnection);
+                Connection server = newConnection("localhost", 9999);
+                String message = readFrom(server);
                 messageForClient.set(message);
 
                 waitForClientToFinishReading.release();
@@ -177,7 +177,7 @@ public class ConnectionListenerTest {
         final RuntimeException handlerException = new RuntimeException("Something wrong happened when handling the connection!");
         final ConnectionListener listener = new ConnectionListener(server, new ConnectionHandler() {
             @Override
-            public void handle(Socket clientConnection) {
+            public void handle(Connection client) {
                 throw handlerException;
             }
         });
@@ -185,7 +185,7 @@ public class ConnectionListenerTest {
         doAfterWaiting(50, new Action() {
             @Override
             public void run() throws IOException {
-                newSocket("localhost", 9999);
+                newConnection("localhost", 9999);
             }
         });
 
@@ -208,7 +208,7 @@ public class ConnectionListenerTest {
         final AtomicInteger handledConnections = new AtomicInteger(0);
         final ConnectionListener listener = new ConnectionListener(server, new ConnectionHandler() {
             @Override
-            public void handle(Socket clientConnection) {
+            public void handle(Connection client) {
                 handledConnections.getAndIncrement();
             }
         });
@@ -305,20 +305,20 @@ public class ConnectionListenerTest {
         }
     }
 
-    private Socket newSocket(String host, int port) throws IOException {
+    private Connection newConnection(String host, int port) throws IOException {
         Socket socket = new Socket(host, port);
         sockets.add(socket);
-        return socket;
+        return new SocketConnection(socket);
     }
 
-    private void writeTo(Socket socket, String output) throws IOException {
-        OutputStream stream = socket.getOutputStream();
+    private void writeTo(Connection connection, String output) throws IOException {
+        OutputStream stream = connection.getOutputStream();
         stream.write(output.getBytes());
         stream.flush();
     }
 
-    private String readFrom(Socket socket) throws IOException {
-        InputStream stream = socket.getInputStream();
+    private String readFrom(Connection connection) throws IOException {
+        InputStream stream = connection.getInputStream();
         return IOUtils.toString(stream);
     }
 }

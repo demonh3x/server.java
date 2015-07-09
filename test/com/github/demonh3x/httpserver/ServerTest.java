@@ -110,9 +110,9 @@ public class ServerTest {
         final AtomicInteger connectionsMade = new AtomicInteger(0);
 
         @Override
-        public void handle(Socket clientConnection) {
+        public void handle(Connection client) {
             try {
-                clientConnection.getOutputStream().write(connectionsMade.incrementAndGet());
+                client.getOutputStream().write(connectionsMade.incrementAndGet());
             } catch (IOException e) {
                 e.printStackTrace();
             }

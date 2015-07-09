@@ -1,15 +1,14 @@
 package com.github.demonh3x.httpserver;
 
 import java.io.IOException;
-import java.net.Socket;
 
 public abstract class ConnectionHandlerIgnoringExceptions implements ConnectionHandler {
-    public abstract void _handle(Socket clientConnection) throws IOException;
+    public abstract void _handle(Connection client) throws IOException;
 
     @Override
-    public void handle(Socket clientConnection) {
+    public void handle(Connection client) {
         try {
-            _handle(clientConnection);
+            _handle(client);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
