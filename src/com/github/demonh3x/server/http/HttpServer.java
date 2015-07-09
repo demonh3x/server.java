@@ -10,7 +10,7 @@ public class HttpServer extends Server {
     private static final RequestHandler HANDLER = new RequestHandler() {
         @Override
         public Response handle(Request request) {
-            return new Response(200, "OK", "Hello world!");
+            return new Response(200, "OK", "Hello world!".getBytes());
         }
     };
 

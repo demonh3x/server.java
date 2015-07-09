@@ -29,8 +29,8 @@ public class ConnectionDouble implements Connection {
         this.closed = true;
     }
 
-    public String getOutput() {
-        return new String(output.toByteArray(), StandardCharsets.UTF_8);
+    public byte[] getOutput() {
+        return output.toByteArray();
     }
 
     public boolean isClosed() {

@@ -28,17 +28,19 @@ public class Http implements ConnectionHandler {
     }
 
     private void write(OutputStream outputStream, Response response) throws IOException {
-        String rawResponse = String.format(
-                "HTTP/1.1 %d %s\n" +
-                "Content-Length: %d\n" +
-                "\n" +
-                "%s",
+        String statusLine = String.format(
+                "HTTP/1.1 %d %s\n",
                 response.getStatusCode(),
-                response.getReasonPhrase(),
-                response.getMessageBody().length(),
-                response.getMessageBody()
+                response.getReasonPhrase()
         );
-        outputStream.write(rawResponse.getBytes());
+        outputStream.write(statusLine.getBytes());
+        String headers = String.format(
+                "Content-Length: %d\n",
+                response.getMessageBody().length
+        );
+        outputStream.write(headers.getBytes());
+        outputStream.write("\n".getBytes());
+        outputStream.write(response.getMessageBody());
     }
 
     private Request parseRequest(InputStream inputStream) {

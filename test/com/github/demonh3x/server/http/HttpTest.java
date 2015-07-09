@@ -7,7 +7,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class HttpTest {
-    public static final Response NULL_RESPONSE = new Response(200, "OK", "");
+    public static final Response NULL_RESPONSE = new Response(200, "OK", new byte[0]);
 
     @Test
     public void receivesAGetRequestToRootUri() {
@@ -35,11 +35,11 @@ public class HttpTest {
 
     @Test
     public void formatsA200ResponseIntoHttp() {
-        RequestHandlerDouble requestHandler = new RequestHandlerDouble(new Response(200, "OK", "Hello client!"));
+        RequestHandlerDouble requestHandler = new RequestHandlerDouble(new Response(200, "OK", "Hello client!".getBytes()));
         ConnectionDouble clientConnection = new ConnectionDouble("GET / HTTP/1.1\n");
         new Http(requestHandler).handle(clientConnection);
 
-        String rawResponse = clientConnection.getOutput();
+        String rawResponse = new String(clientConnection.getOutput());
         assertThat(rawResponse, is(
                 "HTTP/1.1 200 OK\n" +
                 "Content-Length: 13\n" +
@@ -50,11 +50,11 @@ public class HttpTest {
 
     @Test
     public void formatsA404ResponseIntoHttp() {
-        RequestHandlerDouble requestHandler = new RequestHandlerDouble(new Response(404, "Not Found", "Nothing here"));
+        RequestHandlerDouble requestHandler = new RequestHandlerDouble(new Response(404, "Not Found", "Nothing here".getBytes()));
         ConnectionDouble clientConnection = new ConnectionDouble("GET / HTTP/1.1\n");
         new Http(requestHandler).handle(clientConnection);
 
-        String rawResponse = clientConnection.getOutput();
+        String rawResponse = new String(clientConnection.getOutput());
         assertThat(rawResponse, is(
                 "HTTP/1.1 404 Not Found\n" +
                 "Content-Length: 12\n" +

@@ -3,9 +3,9 @@ package com.github.demonh3x.server.http;
 public class Response {
     private final int statusCode;
     private final String reasonPhrase;
-    private final String messageBody;
+    private final byte[] messageBody;
 
-    public Response(int statusCode, String reasonPhrase, String messageBody) {
+    public Response(int statusCode, String reasonPhrase, byte[] messageBody) {
         this.statusCode = statusCode;
         this.reasonPhrase = reasonPhrase;
         this.messageBody = messageBody;
@@ -19,7 +19,7 @@ public class Response {
         return reasonPhrase;
     }
 
-    public String getMessageBody() {
+    public byte[] getMessageBody() {
         return messageBody;
     }
 }
