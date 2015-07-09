@@ -7,19 +7,12 @@ import java.io.*;
 import java.util.concurrent.Executors;
 
 public class HttpServer extends Server {
-    private static final RequestHandler HANDLER = new RequestHandler() {
-        @Override
-        public Response handle(Request request) {
-            return new Response(200, "OK", "Hello world!".getBytes());
-        }
-    };
-
-    public HttpServer(int port) {
-        super(Executors.newSingleThreadExecutor(), port, new Http(HANDLER));
+    public HttpServer(int port, String root) {
+        super(Executors.newSingleThreadExecutor(), port, new Http(new ServeFiles(new File(root))));
     }
 
     public static void main(String[] args) throws IOException {
         Args arguments = new Args(args);
-        new HttpServer(arguments.getPort()).start();
+        new HttpServer(arguments.getPort(), arguments.getDirectory()).start();
     }
 }
