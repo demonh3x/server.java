@@ -29,7 +29,7 @@ public class ServeFilesTest {
     public void servesTheContentOfAnExistentTextFile() throws IOException {
         createFile("dir/file.txt", "content of the file".getBytes());
 
-        Response response = serveFiles.handle(new Request("GET", "dir/file.txt"));
+        Response response = serveFiles.handle(new Request("GET", "/dir/file.txt"));
 
         assertThat(response.getStatusCode(), is(200));
         assertThat(response.getReasonPhrase(), is("OK"));
@@ -41,7 +41,7 @@ public class ServeFilesTest {
     public void servesTheContentOfAnExistentBinaryFile() throws IOException {
         createFile("dir/binary-file.bin", new byte[]{0, 1, 2, -128, 127});
 
-        Response response = serveFiles.handle(new Request("GET", "dir/binary-file.bin"));
+        Response response = serveFiles.handle(new Request("GET", "/dir/binary-file.bin"));
 
         assertThat(response.getStatusCode(), is(200));
         assertThat(response.getReasonPhrase(), is("OK"));
@@ -53,19 +53,32 @@ public class ServeFilesTest {
         createFile("dir/file1.txt", "content of the file 1".getBytes());
         createFile("dir/file2.txt", "content of the file 2".getBytes());
 
-        Response response = serveFiles.handle(new Request("GET", "dir"));
+        Response response = serveFiles.handle(new Request("GET", "/dir"));
 
         assertThat(response.getStatusCode(), is(200));
         assertThat(response.getReasonPhrase(), is("OK"));
         String body = new String(response.getMessageBody());
-        assertThat(body, containsString("<a href=\"dir/file1.txt\">dir/file1.txt</a>"));
-        assertThat(body, containsString("<a href=\"dir/file2.txt\">dir/file2.txt</a>"));
+        assertThat(body, containsString("<a href=\"dir/file1.txt\">file1.txt</a>"));
+        assertThat(body, containsString("<a href=\"dir/file2.txt\">file2.txt</a>"));
+        assertThat(body, not(containsString(testFolder.getRoot().getAbsolutePath())));
+    }
+
+    @Test
+    public void servesTheContentOfSubfolders() throws IOException {
+        createFile("parent/child/file.txt", "content of the file".getBytes());
+
+        Response response = serveFiles.handle(new Request("GET", "/parent/child"));
+
+        assertThat(response.getStatusCode(), is(200));
+        assertThat(response.getReasonPhrase(), is("OK"));
+        String body = new String(response.getMessageBody());
+        assertThat(body, containsString("<a href=\"parent/child/file.txt\">file.txt</a>"));
         assertThat(body, not(containsString(testFolder.getRoot().getAbsolutePath())));
     }
 
     @Test
     public void servesA404WhenTheFileDoesNotExist() {
-        Response response = serveFiles.handle(new Request("GET", "dir/non-existent-file.txt"));
+        Response response = serveFiles.handle(new Request("GET", "/dir/non-existent-file.txt"));
 
         assertThat(response.getStatusCode(), is(404));
         assertThat(response.getReasonPhrase(), is("Not Found"));

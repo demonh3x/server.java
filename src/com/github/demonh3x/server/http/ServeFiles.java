@@ -49,11 +49,12 @@ public class ServeFiles implements RequestHandler {
 
     private String linkTo(File file) {
         String filePath = relativePath(file);
-        return String.format("<a href=\"%s\">%s</a>", filePath, filePath);
+        return String.format("<a href=\"%s\">%s</a>", filePath, file.getName());
     }
 
     private String relativePath(File file) {
         int parentPathLength = root.getAbsolutePath().length();
-        return file.getAbsolutePath().substring(parentPathLength +1);
+        String partialPath = file.getAbsolutePath().substring(parentPathLength);
+        return partialPath.startsWith("/")? partialPath.substring(1) : partialPath;
     }
 }
