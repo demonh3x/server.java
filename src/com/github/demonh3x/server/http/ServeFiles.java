@@ -16,7 +16,7 @@ public class ServeFiles implements RequestHandler {
         File file = new File(root, request.getUri());
 
         if (!file.exists()) {
-            return new Response(404, "Not Found", new byte[0]);
+            return new Response(404, "Not Found", "File not found.".getBytes());
         }
 
         if (file.isDirectory()) {

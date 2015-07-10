@@ -70,7 +70,7 @@ public class ServeFilesTest {
         assertThat(response.getStatusCode(), is(404));
         assertThat(response.getReasonPhrase(), is("Not Found"));
         String body = new String(response.getMessageBody());
-        assertThat(body, is(""));
+        assertThat(body, is("File not found."));
     }
 
     private void createFile(String path, byte[] content) throws IOException {
