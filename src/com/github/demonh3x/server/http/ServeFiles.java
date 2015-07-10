@@ -35,11 +35,14 @@ public class ServeFiles implements RequestHandler {
     }
 
     private String getDirectoryContent(File directory) {
-        String content = "";
+        String content = "<!DOCTYPE html><html><head><title>Directory: " + directory.getName() +
+                "</title><meta charset=\"UTF-8\"></head><body><ul>";
 
         for (File file : directory.listFiles()) {
-            content += linkTo(file) + "\n";
+            content += "<li>" + linkTo(file) + "</li>";
         }
+
+        content += "</ul></body></html>";
 
         return content;
     }
