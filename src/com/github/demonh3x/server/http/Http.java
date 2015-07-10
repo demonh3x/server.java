@@ -25,7 +25,13 @@ public class Http implements ConnectionHandler {
             return;
         }
 
-        Response response = requestHandler.handle(request);
+        Response response;
+        try {
+            response = requestHandler.handle(request);
+        } catch (RuntimeException e) {
+            close(client);
+            throw e;
+        }
 
         try {
             write(client.getOutputStream(), response);

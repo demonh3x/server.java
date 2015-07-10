@@ -129,7 +129,7 @@ public class HttpTest {
     }
 
     @Test
-    public void theExceptionsOccurringInTheRequestHandlerShouldBubbleUp() {
+    public void theExceptionsOccurringInTheRequestHandlerShouldBubbleUpAfterClosingTheConnection() {
         final RuntimeException handlerException = new RuntimeException();
         RequestHandler requestHandler = new RequestHandler() {
             @Override
@@ -147,5 +147,6 @@ public class HttpTest {
         }
 
         assertThat(thrownException, sameInstance(handlerException));
+        assertThat(connection.isClosed(), is(true));
     }
 }
