@@ -22,5 +22,10 @@ public class HttpServer extends Server {
     public static void main(String[] args) throws IOException {
         Args arguments = new Args(args);
         new HttpServer(arguments.getPort(), arguments.getDirectory()).start();
+        System.out.println(String.format(
+                "Server running at port %d, serving the files in %s",
+                arguments.getPort(),
+                arguments.getDirectory()
+        ));
     }
 }
