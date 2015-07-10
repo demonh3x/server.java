@@ -1,7 +1,6 @@
 package com.github.demonh3x.server;
 
 import junit.framework.AssertionFailedError;
-import org.apache.commons.io.IOUtils;
 import org.hamcrest.CoreMatchers;
 import org.junit.After;
 import org.junit.Rule;
@@ -319,6 +318,7 @@ public class ConnectionListenerTest {
 
     private String readFrom(Connection connection) throws IOException {
         InputStream stream = connection.getInputStream();
-        return IOUtils.toString(stream);
+        java.util.Scanner s = new java.util.Scanner(stream).useDelimiter("\\A");
+        return s.hasNext() ? s.next() : "";
     }
 }
