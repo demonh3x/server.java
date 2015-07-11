@@ -58,8 +58,8 @@ public class ServeFilesTest {
         assertThat(response.getStatusCode(), is(200));
         assertThat(response.getReasonPhrase(), is("OK"));
         String body = new String(response.getMessageBody());
-        assertThat(body, containsString("<a href=\"dir/file1.txt\">file1.txt</a>"));
-        assertThat(body, containsString("<a href=\"dir/file2.txt\">file2.txt</a>"));
+        assertThat(body, containsString("<a href=\"/dir/file1.txt\">file1.txt</a>"));
+        assertThat(body, containsString("<a href=\"/dir/file2.txt\">file2.txt</a>"));
         assertThat(body, not(containsString(testFolder.getRoot().getAbsolutePath())));
     }
 
@@ -72,7 +72,7 @@ public class ServeFilesTest {
         assertThat(response.getStatusCode(), is(200));
         assertThat(response.getReasonPhrase(), is("OK"));
         String body = new String(response.getMessageBody());
-        assertThat(body, containsString("<a href=\"parent/child/file.txt\">file.txt</a>"));
+        assertThat(body, containsString("<a href=\"/parent/child/file.txt\">file.txt</a>"));
         assertThat(body, not(containsString(testFolder.getRoot().getAbsolutePath())));
     }
 

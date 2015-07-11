@@ -3,6 +3,7 @@ package com.github.demonh3x.server.http;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class ServeFiles implements RequestHandler {
     private final File root;
@@ -39,7 +40,7 @@ public class ServeFiles implements RequestHandler {
                 "</title><meta charset=\"UTF-8\"></head><body><ul>";
 
         for (File file : directory.listFiles()) {
-            content += "<li>" + linkTo(file) + "</li>";
+            content += "<li>" + linkTo(relativePath(file)) + "</li>";
         }
 
         content += "</ul></body></html>";
@@ -47,14 +48,11 @@ public class ServeFiles implements RequestHandler {
         return content;
     }
 
-    private String linkTo(File file) {
-        String filePath = relativePath(file);
-        return String.format("<a href=\"%s\">%s</a>", filePath, file.getName());
+    private String linkTo(Path path) {
+        return String.format("<a href=\"/%s\">%s</a>", path, path.getFileName());
     }
 
-    private String relativePath(File file) {
-        int parentPathLength = root.getAbsolutePath().length();
-        String partialPath = file.getAbsolutePath().substring(parentPathLength);
-        return partialPath.startsWith("/")? partialPath.substring(1) : partialPath;
+    private Path relativePath(File file) {
+        return root.toPath().relativize(file.toPath());
     }
 }
