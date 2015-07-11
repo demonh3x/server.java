@@ -19,7 +19,7 @@ public class Http implements ConnectionHandler {
     public void handle(Connection client) {
         Request request;
         try {
-            request = parseRequest(client.getInputStream());
+            request = readRequest(client.getInputStream());
         } catch (Exception ignored) {
             close(client);
             return;
@@ -34,7 +34,7 @@ public class Http implements ConnectionHandler {
         }
 
         try {
-            write(client.getOutputStream(), response);
+            write(response, client.getOutputStream());
         } catch (Exception ignored) {
         } finally {
             close(client);
@@ -47,7 +47,7 @@ public class Http implements ConnectionHandler {
         } catch (IOException ignore) {}
     }
 
-    private void write(OutputStream outputStream, Response response) throws IOException {
+    private void write(Response response, OutputStream outputStream) throws IOException {
         String statusLine = String.format(
                 "HTTP/1.1 %d %s\n",
                 response.getStatusCode(),
@@ -63,7 +63,7 @@ public class Http implements ConnectionHandler {
         outputStream.write(response.getMessageBody());
     }
 
-    private Request parseRequest(InputStream inputStream) {
+    private Request readRequest(InputStream inputStream) {
         Scanner scanner = new Scanner(inputStream);
         String method = scanner.next();
         String uri = scanner.next();
