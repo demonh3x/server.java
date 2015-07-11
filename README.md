@@ -18,18 +18,18 @@ A connections server with an HTTP module
 * JUnit
 * Hamcrest
 
-## Setup
+##### Build tool
+* Gradle
 
-##### Compile from commandline
-Pending. (Currently delegated to IDE)
+## Run tests
+`gradle test`
 
-##### Run tests from commandline
-Pending. (Currently delegated to IDE)
+## Compile and run
+`gradle jar` will compile the *.jar file at `build/libs/http-server-0.1.0.jar`.
 
-##### Run
 The HttpServer requires two arguments: 
 
 * `-p` for the port.
 * `-d` for the directory to serve files from.
 
-example: `java -jar httpserver.jar -p 9999 -d ~`
+example: `java -jar build/libs/http-server-0.1.0.jar -p 9999 -d ~`
