@@ -1,5 +1,6 @@
 package com.github.demonh3x.server;
 
+import com.github.demonh3x.server.testdoubles.NullConnectionHandler;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;

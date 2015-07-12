@@ -1,7 +1,8 @@
 package com.github.demonh3x.server.http;
 
-import com.github.demonh3x.server.ConnectionDouble;
-import com.github.demonh3x.server.ConnectionFailingToClose;
+import com.github.demonh3x.server.http.testdoubles.*;
+import com.github.demonh3x.server.testdoubles.ConnectionDouble;
+import com.github.demonh3x.server.testdoubles.ConnectionFailingToClose;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;

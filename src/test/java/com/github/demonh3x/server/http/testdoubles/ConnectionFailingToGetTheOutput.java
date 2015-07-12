@@ -1,4 +1,4 @@
-package com.github.demonh3x.server.http;
+package com.github.demonh3x.server.http.testdoubles;
 
 import java.io.IOException;
 import java.io.OutputStream;

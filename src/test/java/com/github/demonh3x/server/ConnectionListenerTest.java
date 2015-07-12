@@ -1,5 +1,7 @@
 package com.github.demonh3x.server;
 
+import com.github.demonh3x.server.testdoubles.ConnectionHandlerIgnoringExceptions;
+import com.github.demonh3x.server.testdoubles.NullConnectionHandler;
 import junit.framework.AssertionFailedError;
 import org.hamcrest.CoreMatchers;
 import org.junit.After;

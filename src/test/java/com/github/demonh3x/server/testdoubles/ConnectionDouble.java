@@ -1,4 +1,6 @@
-package com.github.demonh3x.server;
+package com.github.demonh3x.server.testdoubles;
+
+import com.github.demonh3x.server.Connection;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;

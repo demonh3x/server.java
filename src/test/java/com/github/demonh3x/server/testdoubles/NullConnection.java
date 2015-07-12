@@ -1,4 +1,6 @@
-package com.github.demonh3x.server;
+package com.github.demonh3x.server.testdoubles;
+
+import com.github.demonh3x.server.Connection;
 
 import java.io.IOException;
 import java.io.InputStream;

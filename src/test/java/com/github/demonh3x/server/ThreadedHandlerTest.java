@@ -1,5 +1,8 @@
 package com.github.demonh3x.server;
 
+import com.github.demonh3x.server.testdoubles.ConnectionHandlerSpy;
+import com.github.demonh3x.server.testdoubles.ExecutorSpy;
+import com.github.demonh3x.server.testdoubles.NullConnection;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.*;

@@ -1,4 +1,7 @@
-package com.github.demonh3x.server;
+package com.github.demonh3x.server.testdoubles;
+
+import com.github.demonh3x.server.Connection;
+import com.github.demonh3x.server.ConnectionHandler;
 
 public class ConnectionHandlerSpy implements ConnectionHandler {
     private Connection receivedConnection = null;
