@@ -1,8 +1,9 @@
-package com.github.demonh3x.server.http;
+package com.github.demonh3x.app;
 
-import com.github.demonh3x.Args;
 import com.github.demonh3x.server.Server;
 import com.github.demonh3x.server.ThreadedHandler;
+import com.github.demonh3x.server.http.Http;
+import com.github.demonh3x.app.handlers.ServeFiles;
 
 import java.io.*;
 import java.util.concurrent.Executors;

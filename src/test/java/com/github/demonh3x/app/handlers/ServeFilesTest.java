@@ -1,5 +1,8 @@
-package com.github.demonh3x.server.http;
+package com.github.demonh3x.app.handlers;
 
+import com.github.demonh3x.app.handlers.ServeFiles;
+import com.github.demonh3x.server.http.Request;
+import com.github.demonh3x.server.http.Response;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

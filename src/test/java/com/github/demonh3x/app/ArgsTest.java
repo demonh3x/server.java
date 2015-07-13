@@ -1,4 +1,4 @@
-package com.github.demonh3x;
+package com.github.demonh3x.app;
 
 import org.junit.Test;
 

@@ -1,4 +1,8 @@
-package com.github.demonh3x.server.http;
+package com.github.demonh3x.app.handlers;
+
+import com.github.demonh3x.server.http.Request;
+import com.github.demonh3x.server.http.RequestHandler;
+import com.github.demonh3x.server.http.Response;
 
 import java.io.File;
 import java.io.IOException;

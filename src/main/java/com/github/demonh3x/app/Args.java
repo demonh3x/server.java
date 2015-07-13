@@ -1,4 +1,4 @@
-package com.github.demonh3x;
+package com.github.demonh3x.app;
 
 import java.util.Arrays;
 import java.util.List;
