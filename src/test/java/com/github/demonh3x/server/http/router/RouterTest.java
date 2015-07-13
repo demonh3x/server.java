@@ -9,8 +9,6 @@ import com.github.demonh3x.server.http.testdoubles.RequestHandlerDouble;
 import com.github.demonh3x.server.http.testdoubles.RequestHandlerSpy;
 import org.junit.Test;
 
-import java.util.Arrays;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
@@ -20,11 +18,8 @@ public class RouterTest {
         Response responseFromHandler = new Response(200, "", new byte[]{});
         RequestHandlerDouble handlerSpy = new RequestHandlerDouble(responseFromHandler);
         Router router = new Router(
-                Arrays.asList(
-                        new Route(new NeverMatching(), new NullRequestHandler()),
-                        new Route(new AlwaysMatching(), handlerSpy)
-                ),
-                new NullRequestHandler()
+                new Route(new NeverMatching(), new NullRequestHandler()),
+                new Route(new AlwaysMatching(), handlerSpy)
         );
         Request request = new Request("GET", "/uri");
 
@@ -39,11 +34,8 @@ public class RouterTest {
         RequestHandlerSpy first = new RequestHandlerSpy();
         RequestHandlerSpy second = new RequestHandlerSpy();
         Router router = new Router(
-                Arrays.asList(
-                        new Route(new AlwaysMatching(), first),
-                        new Route(new AlwaysMatching(), second)
-                ),
-                new NullRequestHandler()
+                new Route(new AlwaysMatching(), first),
+                new Route(new AlwaysMatching(), second)
         );
 
         router.handle(new Request("GET", "/uri"));
@@ -57,11 +49,9 @@ public class RouterTest {
         Response responseFromHandler = new Response(200, "", new byte[]{});
         RequestHandlerDouble handlerSpy = new RequestHandlerDouble(responseFromHandler);
         Router router = new Router(
-                Arrays.asList(
-                        new Route(new NeverMatching(), new NullRequestHandler()),
-                        new Route(new NeverMatching(), new NullRequestHandler())
-                ),
-                handlerSpy
+                handlerSpy,
+                new Route(new NeverMatching(), new NullRequestHandler()),
+                new Route(new NeverMatching(), new NullRequestHandler())
         );
         Request request = new Request("GET", "/uri");
 
@@ -69,5 +59,14 @@ public class RouterTest {
 
         assertThat(handlerSpy.getReceivedRequest(), is(request));
         assertThat(routedResponse, is(responseFromHandler));
+    }
+
+    @Test (expected = RuntimeException.class)
+    public void withoutDefaultHandlerThrowsExceptionIfNoRouteIsMatching() {
+        Router router = new Router();
+
+        Request request = new Request("GET", "/uri");
+
+        router.handle(request);
     }
 }
