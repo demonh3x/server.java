@@ -18,6 +18,11 @@ public class ServeFiles implements RequestHandler {
 
     @Override
     public Response handle(Request request) {
+        if ("PUT".equals(request.getMethod()) ||
+            "POST".equals(request.getMethod())) {
+            return new Response(405, "Method Not Allowed", "Action not allowed.".getBytes());
+        }
+
         File file = new File(root, request.getUri());
 
         if (!file.exists()) {

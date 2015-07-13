@@ -89,6 +89,26 @@ public class ServeFilesTest {
         assertThat(body, is("File not found."));
     }
 
+    @Test
+    public void serves405WhenDoingAPost() {
+        Response response = serveFiles.handle(new Request("POST", "/"));
+
+        assertThat(response.getStatusCode(), is(405));
+        assertThat(response.getReasonPhrase(), is("Method Not Allowed"));
+        String body = new String(response.getMessageBody());
+        assertThat(body, is("Action not allowed."));
+    }
+
+    @Test
+    public void serves405WhenDoingAPut() {
+        Response response = serveFiles.handle(new Request("PUT", "/"));
+
+        assertThat(response.getStatusCode(), is(405));
+        assertThat(response.getReasonPhrase(), is("Method Not Allowed"));
+        String body = new String(response.getMessageBody());
+        assertThat(body, is("Action not allowed."));
+    }
+
     private void createFile(String path, byte[] content) throws IOException {
         File file = new File(testFolder.getRoot(), path);
         file.getParentFile().mkdirs();
