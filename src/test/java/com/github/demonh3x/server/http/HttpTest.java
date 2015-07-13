@@ -14,32 +14,18 @@ public class HttpTest {
 
     @Test
     public void receivesAGetRequestToRootUri() {
-        RequestHandlerDouble requestHandler = new RequestHandlerDouble(NULL_RESPONSE);
-        new Http(requestHandler).handle(new ConnectionDouble(
-                "GET / HTTP/1.1\n"
-        ));
+        Request receivedRequest = getInputCommunicationOf("GET / HTTP/1.1\n");
 
-        Request receivedRequest = requestHandler.getReceivedRequest();
         assertThat(receivedRequest.getMethod(), is("GET"));
         assertThat(receivedRequest.getUri(), is("/"));
     }
 
     @Test
-    public void receivesAPostRequestToHomeUri() {
-        RequestHandlerDouble requestHandler = new RequestHandlerDouble(NULL_RESPONSE);
-        new Http(requestHandler).handle(new ConnectionDouble(
-                "POST /home HTTP/1.1\n"
-        ));
-
-        Request receivedRequest = requestHandler.getReceivedRequest();
-        assertThat(receivedRequest.getMethod(), is("POST"));
-        assertThat(receivedRequest.getUri(), is("/home"));
-    }
-
-    @Test
     public void formatsA200ResponseIntoHttp() {
+        String outputCommunication = getOutputCommunicationOf(new Response(200, "OK", "Hello client!".getBytes()));
+
         assertThat(
-                getRawCommunicationOf(new Response(200, "OK", "Hello client!".getBytes())),
+                outputCommunication,
                 is(
                         "HTTP/1.1 200 OK\n" +
                         "Content-Length: 13\n" +
@@ -134,7 +120,13 @@ public class HttpTest {
         assertThat(connection.isClosed(), is(true));
     }
 
-    private String getRawCommunicationOf(Response response) {
+    private Request getInputCommunicationOf(String rawInputCommunication) {
+        RequestHandlerDouble requestHandler = new RequestHandlerDouble(NULL_RESPONSE);
+        new Http(requestHandler).handle(new ConnectionDouble(rawInputCommunication));
+        return requestHandler.getReceivedRequest();
+    }
+
+    private String getOutputCommunicationOf(Response response) {
         RequestHandlerDouble requestHandler = new RequestHandlerDouble(response);
         ConnectionDouble clientConnection = new ConnectionDouble("GET / HTTP/1.1\n");
         new Http(requestHandler).handle(clientConnection);

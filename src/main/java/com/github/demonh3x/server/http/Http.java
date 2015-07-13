@@ -4,14 +4,14 @@ import com.github.demonh3x.server.Connection;
 import com.github.demonh3x.server.ConnectionHandler;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Scanner;
 
 public class Http implements ConnectionHandler {
     private final RequestHandler requestHandler;
     private final ResponseComposer responseComposer;
+    private final RequestParser requestParser;
 
     public Http(RequestHandler requestHandler) {
+        this.requestParser = new RequestParser();
         this.responseComposer = new ResponseComposer();
         this.requestHandler = requestHandler;
     }
@@ -20,7 +20,7 @@ public class Http implements ConnectionHandler {
     public void handle(Connection client) {
         Request request;
         try {
-            request = readRequest(client.getInputStream());
+            request = requestParser.read(client.getInputStream());
         } catch (Exception ignored) {
             close(client);
             return;
@@ -46,12 +46,5 @@ public class Http implements ConnectionHandler {
         try {
             client.close();
         } catch (IOException ignore) {}
-    }
-
-    private Request readRequest(InputStream inputStream) {
-        Scanner scanner = new Scanner(inputStream);
-        String method = scanner.next();
-        String uri = scanner.next();
-        return new Request(method, uri);
     }
 }
