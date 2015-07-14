@@ -9,6 +9,7 @@ import com.github.demonh3x.server.http.testdoubles.RequestHandlerDouble;
 import com.github.demonh3x.server.http.testdoubles.RequestHandlerSpy;
 import org.junit.Test;
 
+import static com.github.demonh3x.server.http.testdoubles.TestRequest.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
@@ -21,7 +22,7 @@ public class RouterTest {
                 new Route(new NeverMatching(), new NullRequestHandler()),
                 new Route(new AlwaysMatching(), handlerSpy)
         );
-        Request request = new Request("GET", "/uri");
+        Request request = get("/uri");
 
         Response routedResponse = router.handle(request);
 
@@ -38,7 +39,7 @@ public class RouterTest {
                 new Route(new AlwaysMatching(), second)
         );
 
-        router.handle(new Request("GET", "/uri"));
+        router.handle(get("/uri"));
 
         assertThat(first.hasBeenCalled(), is(true));
         assertThat(second.hasBeenCalled(), is(false));
@@ -53,7 +54,7 @@ public class RouterTest {
                 new Route(new NeverMatching(), new NullRequestHandler()),
                 new Route(new NeverMatching(), new NullRequestHandler())
         );
-        Request request = new Request("GET", "/uri");
+        Request request = get("/uri");
 
         Response routedResponse = router.handle(request);
 
@@ -65,7 +66,7 @@ public class RouterTest {
     public void withoutDefaultHandlerThrowsExceptionIfNoRouteIsMatching() {
         Router router = new Router();
 
-        Request request = new Request("GET", "/uri");
+        Request request = get("/uri");
 
         router.handle(request);
     }

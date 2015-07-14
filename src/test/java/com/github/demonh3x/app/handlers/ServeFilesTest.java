@@ -1,7 +1,5 @@
 package com.github.demonh3x.app.handlers;
 
-import com.github.demonh3x.app.handlers.ServeFiles;
-import com.github.demonh3x.server.http.Request;
 import com.github.demonh3x.server.http.Response;
 import org.junit.Before;
 import org.junit.Rule;
@@ -12,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
+import static com.github.demonh3x.server.http.testdoubles.TestRequest.*;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
@@ -32,7 +31,7 @@ public class ServeFilesTest {
     public void servesTheContentOfAnExistentTextFile() throws IOException {
         createFile("dir/file.txt", "content of the file".getBytes());
 
-        Response response = serveFiles.handle(new Request("GET", "/dir/file.txt"));
+        Response response = serveFiles.handle(get("/dir/file.txt"));
 
         assertThat(response.getStatusCode(), is(200));
         assertThat(response.getReasonPhrase(), is("OK"));
@@ -44,7 +43,7 @@ public class ServeFilesTest {
     public void servesTheContentOfAnExistentBinaryFile() throws IOException {
         createFile("dir/binary-file.bin", new byte[]{0, 1, 2, -128, 127});
 
-        Response response = serveFiles.handle(new Request("GET", "/dir/binary-file.bin"));
+        Response response = serveFiles.handle(get("/dir/binary-file.bin"));
 
         assertThat(response.getStatusCode(), is(200));
         assertThat(response.getReasonPhrase(), is("OK"));
@@ -56,7 +55,7 @@ public class ServeFilesTest {
         createFile("dir/file1.txt", "content of the file 1".getBytes());
         createFile("dir/file2.txt", "content of the file 2".getBytes());
 
-        Response response = serveFiles.handle(new Request("GET", "/dir"));
+        Response response = serveFiles.handle(get("/dir"));
 
         assertThat(response.getStatusCode(), is(200));
         assertThat(response.getReasonPhrase(), is("OK"));
@@ -70,7 +69,7 @@ public class ServeFilesTest {
     public void servesTheContentOfSubfolders() throws IOException {
         createFile("parent/child/file.txt", "content of the file".getBytes());
 
-        Response response = serveFiles.handle(new Request("GET", "/parent/child"));
+        Response response = serveFiles.handle(get("/parent/child"));
 
         assertThat(response.getStatusCode(), is(200));
         assertThat(response.getReasonPhrase(), is("OK"));
@@ -81,7 +80,7 @@ public class ServeFilesTest {
 
     @Test
     public void servesA404WhenTheFileDoesNotExist() {
-        Response response = serveFiles.handle(new Request("GET", "/dir/non-existent-file.txt"));
+        Response response = serveFiles.handle(get("/dir/non-existent-file.txt"));
 
         assertThat(response.getStatusCode(), is(404));
         assertThat(response.getReasonPhrase(), is("Not Found"));
@@ -91,7 +90,7 @@ public class ServeFilesTest {
 
     @Test
     public void serves405WhenDoingAPost() {
-        Response response = serveFiles.handle(new Request("POST", "/"));
+        Response response = serveFiles.handle(post("/"));
 
         assertThat(response.getStatusCode(), is(405));
         assertThat(response.getReasonPhrase(), is("Method Not Allowed"));
@@ -101,7 +100,7 @@ public class ServeFilesTest {
 
     @Test
     public void serves405WhenDoingAPut() {
-        Response response = serveFiles.handle(new Request("PUT", "/"));
+        Response response = serveFiles.handle(put("/"));
 
         assertThat(response.getStatusCode(), is(405));
         assertThat(response.getReasonPhrase(), is("Method Not Allowed"));

@@ -1,6 +1,5 @@
 package com.github.demonh3x.server.http;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class Request {
@@ -14,10 +13,6 @@ public class Request {
         this.uri = uri;
         this.messageBody = messageBody;
         this.headers = headers;
-    }
-
-    public Request(String method, String uri) {
-        this(method, uri, new byte[0], new HashMap<String, String>());
     }
 
     public String getMethod() {
