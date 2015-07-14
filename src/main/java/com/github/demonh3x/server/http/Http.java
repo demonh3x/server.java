@@ -3,6 +3,7 @@ package com.github.demonh3x.server.http;
 import com.github.demonh3x.server.Connection;
 import com.github.demonh3x.server.ConnectionHandler;
 import com.github.demonh3x.server.http.request.RequestParser;
+import com.github.demonh3x.server.http.response.ResponseComposer;
 
 import java.io.IOException;
 

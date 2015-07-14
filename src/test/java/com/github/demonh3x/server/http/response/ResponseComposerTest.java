@@ -1,5 +1,6 @@
-package com.github.demonh3x.server.http;
+package com.github.demonh3x.server.http.response;
 
+import com.github.demonh3x.server.http.Response;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
