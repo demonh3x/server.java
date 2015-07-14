@@ -33,8 +33,11 @@ public class TestRequest {
         return req("DELETE", "/");
     }
 
+    public static Request options(String uri) {
+        return req("OPTIONS", uri);
+    }
+
     private static Request req(String method, String uri) {
         return new Request(method, uri, new byte[0], new HashMap<String, String>());
     }
-
 }
