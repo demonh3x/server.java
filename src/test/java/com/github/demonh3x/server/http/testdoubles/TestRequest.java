@@ -22,6 +22,10 @@ public class TestRequest {
         return req("POST", uri);
     }
 
+    public static Request post() {
+        return req("POST", "/");
+    }
+
     public static Request post(String uri, byte[] messageBody) {
         return new Request("POST", uri, messageBody, new HashMap<String, String>());
     }

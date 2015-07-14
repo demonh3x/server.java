@@ -1,10 +1,7 @@
 package com.github.demonh3x.server.http.router.dsl;
 
 import com.github.demonh3x.server.http.RequestHandler;
-import com.github.demonh3x.server.http.router.MethodAndUriMatcher;
-import com.github.demonh3x.server.http.router.RequestMatcher;
-import com.github.demonh3x.server.http.router.Route;
-import com.github.demonh3x.server.http.router.UriMatcher;
+import com.github.demonh3x.server.http.router.*;
 
 public class Routes {
     public enum Method {
@@ -24,7 +21,11 @@ public class Routes {
     }
 
     public static MatchedRoute on(Method method, String uri) {
-        return new MatchedRoute(new MethodAndUriMatcher(method.toString(), uri));
+        MethodMatcher methodMatcher = new MethodMatcher(method.toString());
+        UriMatcher uriMatcher = new UriMatcher(uri);
+        AndMatcher methodAndUriMatcher = new AndMatcher(methodMatcher, uriMatcher);
+
+        return new MatchedRoute(methodAndUriMatcher);
     }
 
     public static MatchedRoute onAnyMethodTo(String uri) {

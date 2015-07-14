@@ -2,8 +2,7 @@ package com.github.demonh3x.server.http.router;
 
 import com.github.demonh3x.server.http.Request;
 import com.github.demonh3x.server.http.Response;
-import com.github.demonh3x.server.http.router.testdoubles.AlwaysMatching;
-import com.github.demonh3x.server.http.router.testdoubles.NeverMatching;
+import com.github.demonh3x.server.http.router.testdoubles.MatcherDouble;
 import com.github.demonh3x.server.http.testdoubles.NullRequestHandler;
 import com.github.demonh3x.server.http.testdoubles.RequestHandlerDouble;
 import com.github.demonh3x.server.http.testdoubles.RequestHandlerSpy;
@@ -19,8 +18,8 @@ public class RouterTest {
         Response responseFromHandler = new Response(200, "", new byte[]{});
         RequestHandlerDouble handlerSpy = new RequestHandlerDouble(responseFromHandler);
         Router router = new Router(
-                new Route(new NeverMatching(), new NullRequestHandler()),
-                new Route(new AlwaysMatching(), handlerSpy)
+                new Route(new MatcherDouble(false), new NullRequestHandler()),
+                new Route(new MatcherDouble(true), handlerSpy)
         );
         Request request = get("/uri");
 
@@ -35,8 +34,8 @@ public class RouterTest {
         RequestHandlerSpy first = new RequestHandlerSpy();
         RequestHandlerSpy second = new RequestHandlerSpy();
         Router router = new Router(
-                new Route(new AlwaysMatching(), first),
-                new Route(new AlwaysMatching(), second)
+                new Route(new MatcherDouble(true), first),
+                new Route(new MatcherDouble(true), second)
         );
 
         router.handle(get("/uri"));
@@ -51,8 +50,8 @@ public class RouterTest {
         RequestHandlerDouble handlerSpy = new RequestHandlerDouble(responseFromHandler);
         Router router = new Router(
                 handlerSpy,
-                new Route(new NeverMatching(), new NullRequestHandler()),
-                new Route(new NeverMatching(), new NullRequestHandler())
+                new Route(new MatcherDouble(false), new NullRequestHandler()),
+                new Route(new MatcherDouble(false), new NullRequestHandler())
         );
         Request request = get("/uri");
 
