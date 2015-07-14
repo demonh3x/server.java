@@ -3,6 +3,7 @@ package com.github.demonh3x.server.http.testdoubles;
 import com.github.demonh3x.server.http.Request;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class TestRequest {
     public static Request get() {
@@ -11,6 +12,10 @@ public class TestRequest {
 
     public static Request get(String uri) {
         return req("GET", uri);
+    }
+
+    public static Request get(String uri, Map<String, String> headers) {
+        return new Request("GET", uri, new byte[0], headers);
     }
 
     public static Request post(String uri) {
@@ -39,5 +44,13 @@ public class TestRequest {
 
     private static Request req(String method, String uri) {
         return new Request(method, uri, new byte[0], new HashMap<String, String>());
+    }
+
+    public static Map<String, String> headers(String... keyValuePairs) {
+        HashMap<String, String> headers = new HashMap<>();
+        for (int i = 0; i < keyValuePairs.length; i += 2) {
+            headers.put(keyValuePairs[i], keyValuePairs[i+1]);
+        }
+        return headers;
     }
 }

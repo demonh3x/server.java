@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 
 public class ServeFiles implements RequestHandler {
     private final File root;
@@ -33,15 +34,11 @@ public class ServeFiles implements RequestHandler {
             return new Response(200, "OK", getDirectoryContent(file).getBytes());
         }
 
-        return new Response(200, "OK", read(file));
-    }
-
-    private byte[] read(File file) {
-        try {
-            return Files.readAllBytes(file.toPath());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if (isRangeRequested(request)) {
+            return new Response(206, "OK", readRange(file, request));
         }
+        
+        return new Response(200, "OK", readFully(file));
     }
 
     private String getDirectoryContent(File directory) {
@@ -63,5 +60,22 @@ public class ServeFiles implements RequestHandler {
 
     private Path relativePath(File file) {
         return root.toPath().relativize(file.toPath());
+    }
+
+    private boolean isRangeRequested(Request request) {
+        return request.getHeaders().containsKey("Range");
+    }
+
+    private byte[] readRange(File file, Request request) {
+        Range range = Range.parseFrom(request.getHeaders().get("Range"), (int) file.length() -1);
+        return Arrays.copyOfRange(readFully(file), range.firstIncludedIndex, range.lastIncludedIndex +1);
+    }
+
+    private byte[] readFully(File file) {
+        try {
+            return Files.readAllBytes(file.toPath());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

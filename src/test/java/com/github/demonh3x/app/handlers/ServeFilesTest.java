@@ -108,6 +108,33 @@ public class ServeFilesTest {
         assertThat(body, is("Action not allowed."));
     }
 
+    @Test
+    public void servesASpecificSubsectionFromStartToEnd() throws IOException {
+        createFile("file.txt", "0 2 4 6".getBytes());
+
+        Response response = serveFiles.handle(get("/file.txt", headers("Range", "bytes=1-4")));
+        assertThat(response.getStatusCode(), is(206));
+        assertThat(response.getMessageBody(), is(" 2 4".getBytes()));
+    }
+
+    @Test
+    public void servesASpecificSubsectionFromStart() throws IOException {
+        createFile("file.txt", "0 2 4 6".getBytes());
+
+        Response response = serveFiles.handle(get("/file.txt", headers("Range", "bytes=2-")));
+        assertThat(response.getStatusCode(), is(206));
+        assertThat(response.getMessageBody(), is("2 4 6".getBytes()));
+    }
+
+    @Test
+    public void servesASpecificSubsectionFromEnd() throws IOException {
+        createFile("file.txt", "0 2 4 6".getBytes());
+
+        Response response = serveFiles.handle(get("/file.txt", headers("Range", "bytes=-2")));
+        assertThat(response.getStatusCode(), is(206));
+        assertThat(response.getMessageBody(), is(" 6".getBytes()));
+    }
+
     private void createFile(String path, byte[] content) throws IOException {
         File file = new File(testFolder.getRoot(), path);
         file.getParentFile().mkdirs();
