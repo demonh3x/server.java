@@ -3,14 +3,14 @@ package com.github.demonh3x.server.http.router;
 import com.github.demonh3x.server.http.Request;
 
 public class UriMatcher implements RequestMatcher {
-    private final String exactUri;
+    private final String uri;
 
-    public UriMatcher(String exactUri) {
-        this.exactUri = exactUri;
+    public UriMatcher(String uriBeginning) {
+        this.uri = uriBeginning;
     }
 
     @Override
     public boolean isRequestedBy(Request request) {
-        return exactUri.equals(request.getUri());
+        return request.getUri().startsWith(uri);
     }
 }

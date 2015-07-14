@@ -32,6 +32,11 @@ public class UriMatcherTest {
     }
 
     @Test
+    public void matchesAUriStartingWithIt() {
+        assertRequestedBy(get("/index?k=v"));
+    }
+
+    @Test
     public void doesNotMatchAGetWithDifferentUri() {
         assertNotRequestedBy(get("/"));
     }
