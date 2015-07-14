@@ -5,18 +5,9 @@ public class Configuration {
     private int port;
     private String directory;
 
-    public Configuration() {
-    }
-
-    public void setHost(String host) {
+    public Configuration(String host, int port, String directory) {
         this.host = host;
-    }
-
-    public void setPort(int port) {
         this.port = port;
-    }
-
-    public void setDirectory(String directory) {
         this.directory = directory;
     }
 

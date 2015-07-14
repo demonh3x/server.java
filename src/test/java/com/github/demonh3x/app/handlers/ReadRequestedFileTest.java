@@ -8,30 +8,32 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 
+import static com.github.demonh3x.app.handlers.TestFiles.createFile;
 import static com.github.demonh3x.server.http.testdoubles.TestRequest.*;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class ServeFilesTest {
+public class ReadRequestedFileTest {
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
 
-    ServeFiles serveFiles;
+    File root;
+    ReadRequestedFile read;
 
     @Before
     public void setUp() {
-        serveFiles = new ServeFiles(testFolder.getRoot());
+        root = testFolder.getRoot();
+        read = new ReadRequestedFile(root);
     }
 
     @Test
     public void servesTheContentOfAnExistentTextFile() throws IOException {
-        createFile("dir/file.txt", "content of the file");
+        createFile(root, "dir/file.txt", "content of the file");
 
-        Response response = serveFiles.handle(get("/dir/file.txt"));
+        Response response = read.handle(get("/dir/file.txt"));
 
         assertThat(response.getStatusCode(), is(200));
         assertThat(response.getReasonPhrase(), is("OK"));
@@ -41,9 +43,9 @@ public class ServeFilesTest {
 
     @Test
     public void servesTheContentOfAnExistentBinaryFile() throws IOException {
-        createFile("dir/binary-file.bin", new byte[]{0, 1, 2, -128, 127});
+        createFile(root, "dir/binary-file.bin", new byte[]{0, 1, 2, -128, 127});
 
-        Response response = serveFiles.handle(get("/dir/binary-file.bin"));
+        Response response = read.handle(get("/dir/binary-file.bin"));
 
         assertThat(response.getStatusCode(), is(200));
         assertThat(response.getReasonPhrase(), is("OK"));
@@ -52,35 +54,35 @@ public class ServeFilesTest {
 
     @Test
     public void servesTheContentOfAFolder() throws IOException {
-        createFile("dir/file1.txt", "content of the file 1");
-        createFile("dir/file2.txt", "content of the file 2");
+        createFile(root, "dir/file1.txt", "content of the file 1");
+        createFile(root, "dir/file2.txt", "content of the file 2");
 
-        Response response = serveFiles.handle(get("/dir"));
+        Response response = read.handle(get("/dir"));
 
         assertThat(response.getStatusCode(), is(200));
         assertThat(response.getReasonPhrase(), is("OK"));
         String body = new String(response.getMessageBody());
         assertThat(body, containsString("<a href=\"/dir/file1.txt\">file1.txt</a>"));
         assertThat(body, containsString("<a href=\"/dir/file2.txt\">file2.txt</a>"));
-        assertThat(body, not(containsString(testFolder.getRoot().getAbsolutePath())));
+        assertThat(body, not(containsString(root.getAbsolutePath())));
     }
 
     @Test
     public void servesTheContentOfSubfolders() throws IOException {
-        createFile("parent/child/file.txt", "content of the file");
+        createFile(root, "parent/child/file.txt", "content of the file");
 
-        Response response = serveFiles.handle(get("/parent/child"));
+        Response response = read.handle(get("/parent/child"));
 
         assertThat(response.getStatusCode(), is(200));
         assertThat(response.getReasonPhrase(), is("OK"));
         String body = new String(response.getMessageBody());
         assertThat(body, containsString("<a href=\"/parent/child/file.txt\">file.txt</a>"));
-        assertThat(body, not(containsString(testFolder.getRoot().getAbsolutePath())));
+        assertThat(body, not(containsString(root.getAbsolutePath())));
     }
 
     @Test
     public void servesA404WhenTheFileDoesNotExist() {
-        Response response = serveFiles.handle(get("/dir/non-existent-file.txt"));
+        Response response = read.handle(get("/dir/non-existent-file.txt"));
 
         assertThat(response.getStatusCode(), is(404));
         assertThat(response.getReasonPhrase(), is("Not Found"));
@@ -89,30 +91,10 @@ public class ServeFilesTest {
     }
 
     @Test
-    public void serves405WhenDoingAPost() {
-        Response response = serveFiles.handle(post("/"));
-
-        assertThat(response.getStatusCode(), is(405));
-        assertThat(response.getReasonPhrase(), is("Method Not Allowed"));
-        String body = new String(response.getMessageBody());
-        assertThat(body, is("Action not allowed."));
-    }
-
-    @Test
-    public void serves405WhenDoingAPut() {
-        Response response = serveFiles.handle(put("/"));
-
-        assertThat(response.getStatusCode(), is(405));
-        assertThat(response.getReasonPhrase(), is("Method Not Allowed"));
-        String body = new String(response.getMessageBody());
-        assertThat(body, is("Action not allowed."));
-    }
-
-    @Test
     public void servesASpecificSubsectionFromStartToEnd() throws IOException {
-        createFile("file.txt", "0 2 4 6");
+        createFile(root, "file.txt", "0 2 4 6");
 
-        Response response = serveFiles.handle(get("/file.txt", headers("Range", "bytes=1-4")));
+        Response response = read.handle(get("/file.txt", headers("Range", "bytes=1-4")));
         assertThat(response.getStatusCode(), is(206));
         assertThat(response.getReasonPhrase(), is("Partial Content"));
         assertThat(response.getMessageBody(), is(" 2 4".getBytes()));
@@ -120,9 +102,9 @@ public class ServeFilesTest {
 
     @Test
     public void servesASpecificSubsectionFromStart() throws IOException {
-        createFile("file.txt", "0 2 4 6");
+        createFile(root, "file.txt", "0 2 4 6");
 
-        Response response = serveFiles.handle(get("/file.txt", headers("Range", "bytes=2-")));
+        Response response = read.handle(get("/file.txt", headers("Range", "bytes=2-")));
         assertThat(response.getStatusCode(), is(206));
         assertThat(response.getReasonPhrase(), is("Partial Content"));
         assertThat(response.getMessageBody(), is("2 4 6".getBytes()));
@@ -130,22 +112,11 @@ public class ServeFilesTest {
 
     @Test
     public void servesASpecificSubsectionFromEnd() throws IOException {
-        createFile("file.txt", "0 2 4 6");
+        createFile(root, "file.txt", "0 2 4 6");
 
-        Response response = serveFiles.handle(get("/file.txt", headers("Range", "bytes=-2")));
+        Response response = read.handle(get("/file.txt", headers("Range", "bytes=-2")));
         assertThat(response.getStatusCode(), is(206));
         assertThat(response.getReasonPhrase(), is("Partial Content"));
         assertThat(response.getMessageBody(), is(" 6".getBytes()));
-    }
-
-    private void createFile(String path, String content) throws IOException {
-        createFile(path, content.getBytes());
-    }
-
-    private void createFile(String path, byte[] content) throws IOException {
-        File file = new File(testFolder.getRoot(), path);
-        file.getParentFile().mkdirs();
-        file.createNewFile();
-        Files.write(file.toPath(), content);
     }
 }

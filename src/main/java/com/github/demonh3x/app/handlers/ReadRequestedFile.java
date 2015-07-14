@@ -11,20 +11,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 
-public class ServeFiles implements RequestHandler {
+public class ReadRequestedFile implements RequestHandler {
     private final File root;
 
-    public ServeFiles(File root) {
+    public ReadRequestedFile(File root) {
         this.root = root;
     }
 
     @Override
     public Response handle(Request request) {
-        if ("PUT".equals(request.getMethod()) ||
-            "POST".equals(request.getMethod())) {
-            return new Response(405, "Method Not Allowed", "Action not allowed.".getBytes());
-        }
-
         File file = new File(root, request.getUri());
 
         if (!file.exists()) {
@@ -38,7 +33,7 @@ public class ServeFiles implements RequestHandler {
         if (isRangeRequested(request)) {
             return new Response(206, "Partial Content", readRange(file, request));
         }
-        
+
         return new Response(200, "OK", readFully(file));
     }
 
@@ -69,7 +64,7 @@ public class ServeFiles implements RequestHandler {
 
     private byte[] readRange(File file, Request request) {
         Range range = Range.parseFrom(request.getHeaders().get("Range"), (int) file.length() -1);
-        return Arrays.copyOfRange(readFully(file), range.firstIncludedIndex, range.lastIncludedIndex +1);
+        return Arrays.copyOfRange(readFully(file), range.firstIncludedIndex, range.lastIncludedIndex + 1);
     }
 
     private byte[] readFully(File file) {
