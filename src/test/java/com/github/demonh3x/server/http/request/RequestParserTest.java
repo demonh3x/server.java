@@ -1,5 +1,6 @@
-package com.github.demonh3x.server.http;
+package com.github.demonh3x.server.http.request;
 
+import com.github.demonh3x.server.http.Request;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 
