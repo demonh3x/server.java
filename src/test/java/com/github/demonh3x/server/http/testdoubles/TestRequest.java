@@ -46,6 +46,10 @@ public class TestRequest {
         return req("OPTIONS", uri);
     }
 
+    public static Request patch(String uri, byte[] messageBody, Map<String, String> headers) {
+        return new Request("PATCH", uri, messageBody, headers);
+    }
+
     private static Request req(String method, String uri) {
         return new Request(method, uri, new byte[0], new HashMap<String, String>());
     }
