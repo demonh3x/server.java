@@ -1,4 +1,4 @@
-package com.github.demonh3x.app.handlers;
+package com.github.demonh3x.server.http.headers;
 
 public class Range {
     public final int firstIncludedIndex;
