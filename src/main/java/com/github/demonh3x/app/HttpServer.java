@@ -2,6 +2,7 @@ package com.github.demonh3x.app;
 
 import com.github.demonh3x.app.handlers.AccessEntity;
 import com.github.demonh3x.app.handlers.AvailableOptions;
+import com.github.demonh3x.app.handlers.EchoQuery;
 import com.github.demonh3x.server.ConnectionHandler;
 import com.github.demonh3x.server.Server;
 import com.github.demonh3x.server.ThreadedHandler;
@@ -54,11 +55,13 @@ public class HttpServer {
         Redirect redirectHome = new Redirect(getHomeUri(config));
         AccessEntity accessToFormEntity = new AccessEntity();
         AvailableOptions respondAvailableOptions = new AvailableOptions();
+        EchoQuery echoQueryParameters = new EchoQuery();
 
         return new Router(
                 serveFilesOnDirectory,
                 on(GET, "/redirect").will(redirectHome),
                 on(OPTIONS, "/method_options").will(respondAvailableOptions),
+                on(GET, "/parameters").will(echoQueryParameters),
                 onAnyMethodTo("/form").will(accessToFormEntity)
         );
     }
