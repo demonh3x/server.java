@@ -7,7 +7,6 @@ import org.junit.Test;
 import static com.github.demonh3x.server.http.testdoubles.TestRequest.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasKey;
 
 public class AvailableOptionsTest {
     AvailableOptions availableOptions;
@@ -22,7 +21,7 @@ public class AvailableOptionsTest {
         Response response = availableOptions.handle(options("/"));
         assertThat(response.getStatusCode(), is(200));
         assertThat(response.getReasonPhrase(), is("OK"));
-        assertThat(response.getHeaders(), hasKey("Allow"));
+        assertThat(response.getHeaders().containsKey("Allow"), is(true));
         assertThat(response.getHeaders().get("Allow"), is("GET,HEAD,POST,OPTIONS,PUT"));
     }
 }
