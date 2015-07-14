@@ -1,5 +1,6 @@
 package com.github.demonh3x.app;
 
+import com.github.demonh3x.app.handlers.AccessEntity;
 import com.github.demonh3x.server.ConnectionHandler;
 import com.github.demonh3x.server.Server;
 import com.github.demonh3x.server.ThreadedHandler;
@@ -50,10 +51,12 @@ public class HttpServer {
     private static RequestHandler getRoutes(Configuration config) {
         ServeFiles serveFilesOnDirectory = serveFilesOn(config.getDirectory());
         Redirect redirectHome = new Redirect(getHomeUri(config));
+        AccessEntity accessToFormEntity = new AccessEntity();
 
         return new Router(
                 serveFilesOnDirectory,
-                on(GET, "/redirect").will(redirectHome)
+                on(GET, "/redirect").will(redirectHome),
+                onAnyMethodTo("/form").will(accessToFormEntity)
         );
     }
 
