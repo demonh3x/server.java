@@ -4,6 +4,7 @@ import com.github.demonh3x.server.http.RequestHandler;
 import com.github.demonh3x.server.http.router.MethodAndUriMatcher;
 import com.github.demonh3x.server.http.router.RequestMatcher;
 import com.github.demonh3x.server.http.router.Route;
+import com.github.demonh3x.server.http.router.UriMatcher;
 
 public class Routes {
     public enum Method {
@@ -24,5 +25,9 @@ public class Routes {
 
     public static MatchedRoute on(Method method, String uri) {
         return new MatchedRoute(new MethodAndUriMatcher(method.toString(), uri));
+    }
+
+    public static MatchedRoute onAnyMethodTo(String uri) {
+        return new MatchedRoute(new UriMatcher(uri));
     }
 }
