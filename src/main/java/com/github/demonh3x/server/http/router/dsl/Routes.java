@@ -8,7 +8,7 @@ import com.github.demonh3x.server.http.router.UriMatcher;
 
 public class Routes {
     public enum Method {
-        GET, POST, PUT, DELETE, PATCH, OPTION
+        GET, POST, PUT, DELETE, PATCH, OPTIONS
     }
 
     public static class MatchedRoute {
