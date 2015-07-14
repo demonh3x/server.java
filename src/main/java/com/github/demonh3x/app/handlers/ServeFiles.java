@@ -36,7 +36,7 @@ public class ServeFiles implements RequestHandler {
         }
 
         if (isRangeRequested(request)) {
-            return new Response(206, "OK", readRange(file, request));
+            return new Response(206, "Partial Content", readRange(file, request));
         }
         
         return new Response(200, "OK", readFully(file));

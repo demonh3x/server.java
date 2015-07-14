@@ -29,7 +29,7 @@ public class ServeFilesTest {
 
     @Test
     public void servesTheContentOfAnExistentTextFile() throws IOException {
-        createFile("dir/file.txt", "content of the file".getBytes());
+        createFile("dir/file.txt", "content of the file");
 
         Response response = serveFiles.handle(get("/dir/file.txt"));
 
@@ -52,8 +52,8 @@ public class ServeFilesTest {
 
     @Test
     public void servesTheContentOfAFolder() throws IOException {
-        createFile("dir/file1.txt", "content of the file 1".getBytes());
-        createFile("dir/file2.txt", "content of the file 2".getBytes());
+        createFile("dir/file1.txt", "content of the file 1");
+        createFile("dir/file2.txt", "content of the file 2");
 
         Response response = serveFiles.handle(get("/dir"));
 
@@ -67,7 +67,7 @@ public class ServeFilesTest {
 
     @Test
     public void servesTheContentOfSubfolders() throws IOException {
-        createFile("parent/child/file.txt", "content of the file".getBytes());
+        createFile("parent/child/file.txt", "content of the file");
 
         Response response = serveFiles.handle(get("/parent/child"));
 
@@ -110,29 +110,36 @@ public class ServeFilesTest {
 
     @Test
     public void servesASpecificSubsectionFromStartToEnd() throws IOException {
-        createFile("file.txt", "0 2 4 6".getBytes());
+        createFile("file.txt", "0 2 4 6");
 
         Response response = serveFiles.handle(get("/file.txt", headers("Range", "bytes=1-4")));
         assertThat(response.getStatusCode(), is(206));
+        assertThat(response.getReasonPhrase(), is("Partial Content"));
         assertThat(response.getMessageBody(), is(" 2 4".getBytes()));
     }
 
     @Test
     public void servesASpecificSubsectionFromStart() throws IOException {
-        createFile("file.txt", "0 2 4 6".getBytes());
+        createFile("file.txt", "0 2 4 6");
 
         Response response = serveFiles.handle(get("/file.txt", headers("Range", "bytes=2-")));
         assertThat(response.getStatusCode(), is(206));
+        assertThat(response.getReasonPhrase(), is("Partial Content"));
         assertThat(response.getMessageBody(), is("2 4 6".getBytes()));
     }
 
     @Test
     public void servesASpecificSubsectionFromEnd() throws IOException {
-        createFile("file.txt", "0 2 4 6".getBytes());
+        createFile("file.txt", "0 2 4 6");
 
         Response response = serveFiles.handle(get("/file.txt", headers("Range", "bytes=-2")));
         assertThat(response.getStatusCode(), is(206));
+        assertThat(response.getReasonPhrase(), is("Partial Content"));
         assertThat(response.getMessageBody(), is(" 6".getBytes()));
+    }
+
+    private void createFile(String path, String content) throws IOException {
+        createFile(path, content.getBytes());
     }
 
     private void createFile(String path, byte[] content) throws IOException {
