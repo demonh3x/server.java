@@ -14,7 +14,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 public class RequestParserTest {
     @Test
-    public void receivesAGetRequestToRootUri() throws IOException {
+    public void receivesAGetRequestToRootUri() {
         Request receivedRequest = readFrom(
                 "GET / HTTP/1.1\r\n" +
                 "\r\n"
@@ -24,7 +24,7 @@ public class RequestParserTest {
     }
 
     @Test
-    public void receivesAPostRequestToHomeUri() throws IOException {
+    public void receivesAPostRequestToHomeUri() {
         Request receivedRequest = readFrom(
                 "POST /home HTTP/1.1\r\n" +
                 "\r\n"
@@ -34,7 +34,7 @@ public class RequestParserTest {
     }
 
     @Test
-    public void receivesHeaders() throws IOException {
+    public void receivesHeaders() {
         Request receivedRequest = readFrom(
                 "GET / HTTP/1.1\r\n" +
                 "HeaderName1: header:Value1\r\n" +
@@ -48,7 +48,7 @@ public class RequestParserTest {
     }
 
     @Test
-    public void receivesAPostRequestWithAnEntity() throws IOException {
+    public void receivesAPostRequestWithAnEntity() {
         Request receivedRequest = readFrom(
                 "POST /home HTTP/1.1\r\n" +
                 "Content-Length: 5\r\n" +
@@ -59,7 +59,7 @@ public class RequestParserTest {
     }
 
     @Test
-    public void receivesARequestWithAnEntityButNoContentLength() throws IOException {
+    public void receivesARequestWithAnEntityButNoContentLength() {
         Request receivedRequest = readFrom(
                 "POST /home HTTP/1.1\r\n" +
                 "\r\n" +
@@ -69,7 +69,7 @@ public class RequestParserTest {
     }
 
     @Test
-    public void receivesARequestWithContentLengthSmallerThanTheEntity() throws IOException {
+    public void receivesARequestWithContentLengthSmallerThanTheEntity() {
         Request receivedRequest = readFrom(
                 "POST /home HTTP/1.1\r\n" +
                 "Content-Length: 5\r\n" +
@@ -79,8 +79,8 @@ public class RequestParserTest {
         assertThat(receivedRequest.getMessageBody(), is("12345".getBytes()));
     }
 
-    @Test (expected = IOException.class)
-    public void receivesARequestWithContentLengthGreaterThanTheEntity() throws IOException {
+    @Test (expected = Exception.class)
+    public void receivesARequestWithContentLengthGreaterThanTheEntity() {
         readFrom(
                 "POST /home HTTP/1.1\r\n" +
                 "Content-Length: 10\r\n" +
@@ -89,8 +89,12 @@ public class RequestParserTest {
         );
     }
 
-    private Request readFrom(String rawRequest) throws IOException {
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(rawRequest.getBytes());
-        return new RequestParser().read(inputStream);
+    private Request readFrom(String communication) {
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(communication.getBytes());
+        try {
+            return new RequestParser().read(inputStream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

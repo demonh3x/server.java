@@ -15,7 +15,7 @@ public class TestRequest {
     }
 
     public static Request get(String uri, Map<String, String> headers) {
-        return new Request("GET", uri, new byte[0], headers);
+        return req("GET", uri, new byte[0], headers);
     }
 
     public static Request post(String uri) {
@@ -27,7 +27,7 @@ public class TestRequest {
     }
 
     public static Request post(String uri, byte[] messageBody) {
-        return new Request("POST", uri, messageBody, new HashMap<String, String>());
+        return req("POST", uri, messageBody);
     }
 
     public static Request put(String uri) {
@@ -35,7 +35,7 @@ public class TestRequest {
     }
 
     public static Request put(String uri, byte[] messageBody) {
-        return new Request("PUT", uri, messageBody, new HashMap<String, String>());
+        return req("PUT", uri, messageBody);
     }
 
     public static Request delete() {
@@ -47,11 +47,19 @@ public class TestRequest {
     }
 
     public static Request patch(String uri, byte[] messageBody, Map<String, String> headers) {
-        return new Request("PATCH", uri, messageBody, headers);
+        return req("PATCH", uri, messageBody, headers);
     }
 
     private static Request req(String method, String uri) {
-        return new Request(method, uri, new byte[0], new HashMap<String, String>());
+        return req(method, uri, new byte[0], headers());
+    }
+
+    private static Request req(String method, String uri, byte[] messageBody) {
+        return req(method, uri, messageBody, headers());
+    }
+
+    private static Request req(String method, String uri, byte[] messageBody, Map<String, String> headers) {
+        return new Request(method, uri, messageBody, headers);
     }
 
     public static Map<String, String> headers(String... keyValuePairs) {
