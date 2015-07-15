@@ -14,6 +14,10 @@ public class TestRequest {
         return req("GET", uri);
     }
 
+    public static Request get(Map<String, String> headers) {
+        return get("/", headers);
+    }
+
     public static Request get(String uri, Map<String, String> headers) {
         return req("GET", uri, new byte[0], headers);
     }
