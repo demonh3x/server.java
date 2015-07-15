@@ -21,6 +21,7 @@ public class RequestParserTest {
         );
         assertThat(receivedRequest.getMethod(), is("GET"));
         assertThat(receivedRequest.getUri(), is("/"));
+        assertThat(receivedRequest.getHttpVersion(), is("HTTP/1.1"));
     }
 
     @Test

@@ -12,6 +12,6 @@ public class RequestParser {
         Map<String, String> headers = reader.readHeaders();
         byte[] messageBody = reader.readMessageBody(headers);
 
-        return new Request(requestLine.method, requestLine.uri, messageBody, headers);
+        return new Request(requestLine.method, requestLine.uri, requestLine.httpVersion, messageBody, headers);
     }
 }

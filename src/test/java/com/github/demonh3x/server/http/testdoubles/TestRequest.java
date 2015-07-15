@@ -59,7 +59,7 @@ public class TestRequest {
     }
 
     private static Request req(String method, String uri, byte[] messageBody, Map<String, String> headers) {
-        return new Request(method, uri, messageBody, headers);
+        return new Request(method, uri, "HTTP/1.1", messageBody, headers);
     }
 
     public static Map<String, String> headers(String... keyValuePairs) {
