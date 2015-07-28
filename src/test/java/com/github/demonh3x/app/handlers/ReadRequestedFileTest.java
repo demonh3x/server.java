@@ -8,6 +8,7 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 import static com.github.demonh3x.app.handlers.TestFiles.createFile;
 import static com.github.demonh3x.server.http.testdoubles.TestRequest.*;
@@ -15,6 +16,7 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasEntry;
 
 public class ReadRequestedFileTest {
     @Rule
@@ -118,5 +120,31 @@ public class ReadRequestedFileTest {
         assertThat(response.getStatusCode(), is(206));
         assertThat(response.getReasonPhrase(), is("Partial Content"));
         assertThat(response.getMessageBody(), is(" 6".getBytes()));
+    }
+
+    @Test
+    public void aTextFileHasPlainTextAsTheContentType() {
+        assertThat(headersRespondedFor("file.txt"), hasEntry("Content-Type", "text/plain"));
+    }
+
+    @Test
+    public void aJpegFileHasImageJpegAsTheContentType() {
+        assertThat(headersRespondedFor("image.jpeg"), hasEntry("Content-Type", "image/jpeg"));
+    }
+
+    @Test
+    public void aPngFileHasImagePngAsTheContentType() {
+        assertThat(headersRespondedFor("image.png"), hasEntry("Content-Type", "image/png"));
+    }
+
+    @Test
+    public void aGifFileHasImageGifAsTheContentType() {
+        assertThat(headersRespondedFor("image.gif"), hasEntry("Content-Type", "image/gif"));
+    }
+
+    private Map<String, String> headersRespondedFor(String filename) {
+        createFile(root, filename, new byte[0]);
+        Response response = read.handle(get("/" + filename));
+        return response.getHeaders();
     }
 }

@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ReadRequestedFile implements RequestHandler {
     private final File root;
@@ -34,7 +36,7 @@ public class ReadRequestedFile implements RequestHandler {
             return new Response(206, "Partial Content", readRange(file, request));
         }
 
-        return new Response(200, "OK", readFully(file));
+        return new Response(200, "OK", readFully(file), headersFor(file));
     }
 
     private String getDirectoryContent(File directory) {
@@ -73,5 +75,26 @@ public class ReadRequestedFile implements RequestHandler {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private Map<String, String> headersFor(final File file) {
+        return new HashMap<String, String>(){{
+            put("Content-Type", getContentTypeFor(file));
+        }};
+    }
+
+    private String getContentTypeFor(File file) {
+        String extension = getExtension(file);
+
+        if ("txt".equals(extension)) {
+            return "text/plain";
+        } else {
+            return "image/" + extension;
+        }
+    }
+
+    private String getExtension(File file) {
+        String[] parts = file.getName().split("\\.");
+        return parts[parts.length -1];
     }
 }
