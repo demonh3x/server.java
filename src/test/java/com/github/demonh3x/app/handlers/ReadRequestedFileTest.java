@@ -16,7 +16,6 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasEntry;
 
 public class ReadRequestedFileTest {
     @Rule
@@ -124,22 +123,27 @@ public class ReadRequestedFileTest {
 
     @Test
     public void aTextFileHasPlainTextAsTheContentType() {
-        assertThat(headersRespondedFor("file.txt"), hasEntry("Content-Type", "text/plain"));
+        assertContentTypeFor("image.txt", "text/plain");
     }
 
     @Test
     public void aJpegFileHasImageJpegAsTheContentType() {
-        assertThat(headersRespondedFor("image.jpeg"), hasEntry("Content-Type", "image/jpeg"));
+        assertContentTypeFor("image.jpeg", "image/jpeg");
     }
 
     @Test
     public void aPngFileHasImagePngAsTheContentType() {
-        assertThat(headersRespondedFor("image.png"), hasEntry("Content-Type", "image/png"));
+        assertContentTypeFor("image.png", "image/png");
     }
 
     @Test
     public void aGifFileHasImageGifAsTheContentType() {
-        assertThat(headersRespondedFor("image.gif"), hasEntry("Content-Type", "image/gif"));
+        assertContentTypeFor("image.gif", "image/gif");
+    }
+
+    private void assertContentTypeFor(String filename, String contentType) {
+        Map<String, String> headers = headersRespondedFor(filename);
+        assertThat(headers.get("Content-Type"), is(contentType));
     }
 
     private Map<String, String> headersRespondedFor(String filename) {
