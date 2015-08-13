@@ -22,14 +22,7 @@ A connections server with an HTTP module
 * Gradle
 
 ## Run tests
-`gradle test`
+`gradle test --info`
 
-## Compile and run
-`gradle jar` will compile the *.jar file at `build/libs/http-server-0.1.0.jar`.
-
-The HttpServer requires two arguments: 
-
-* `-p` for the port.
-* `-d` for the directory to serve files from.
-
-example: `java -jar build/libs/http-server-0.1.0.jar -p 9999 -d ~`
+## Compile
+`gradle jar` will compile the *.jar file at `build/libs/server-0.1.0.jar`.

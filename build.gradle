@@ -10,6 +10,6 @@ dependencies {
 }
 
 jar {
-    baseName = 'http-server'
+    baseName = 'server'
     version = '0.1.0'
 }
