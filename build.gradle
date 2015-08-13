@@ -12,7 +12,4 @@ dependencies {
 jar {
     baseName = 'http-server'
     version = '0.1.0'
-    manifest {
-        attributes 'Main-Class': 'com.github.demonh3x.app.HttpServer'
-    }
 }
