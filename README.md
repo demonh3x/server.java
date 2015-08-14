@@ -4,11 +4,6 @@
 
 A connections server with an HTTP module
 
-## Features
-
-##### HTTP
-* Serves files in a directory
-
 ## Dependencies
 
 ##### Execution
